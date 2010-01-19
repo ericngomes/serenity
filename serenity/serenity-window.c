@@ -22,6 +22,7 @@
 
 #include <glib/gi18n.h>
 
+#include "serenity-paths.h"
 #include "serenity-window.h"
 
 G_DEFINE_TYPE(SerenityWindow, serenity_window, GTK_TYPE_WINDOW)
@@ -37,6 +38,7 @@ G_DEFINE_TYPE(SerenityWindow, serenity_window, GTK_TYPE_WINDOW)
 struct _SerenityWindowPrivate
 {
 	SerenityDocument *document;
+	GtkBuilder *builder;
 };
 
 /**
@@ -128,10 +130,23 @@ serenity_window_class_init (SerenityWindowClass *klass)
 static void
 serenity_window_init (SerenityWindow *window)
 {
+	GtkWidget *child;
+	gchar *path;
+
 	window->priv = G_TYPE_INSTANCE_GET_PRIVATE(window,
 	                                           SERENITY_TYPE_WINDOW,
 	                                           SerenityWindowPrivate);
 
 	gtk_window_set_title(GTK_WINDOW(window), _("Serenity"));
 	gtk_window_set_default_size(GTK_WINDOW(window), 640, 480);
+
+	path = serenity_paths_build_data_path("ui", "serenity.ui", NULL);
+	window->priv->builder = gtk_builder_new();
+	gtk_builder_add_from_file(window->priv->builder, path, NULL);
+	g_free(path);
+
+	child = GTK_WIDGET(gtk_builder_get_object(window->priv->builder,
+	                                          "window-child"));
+	g_assert(child);
+	gtk_widget_reparent(child, GTK_WIDGET(window));
 }

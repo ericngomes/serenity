@@ -46,3 +46,6 @@ serenity_LDFLAGS =							\
 	-no-undefined							\
 	-export-symbols-regex "^serenity_.*"				\
 	$(NULL)
+
+test:
+	SERENITY_DATA_PATH=$(top_srcdir)/data $(builddir)/serenity

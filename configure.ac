@@ -72,7 +72,7 @@ AC_OUTPUT([
 	build/shave
 	build/shave-libtool
 	data/Makefile
-	data/dbus/Makefile
+	data/ui/Makefile
 	doc/Makefile
 	doc/reference/Makefile
 	tests/Makefile

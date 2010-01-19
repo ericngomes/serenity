@@ -27,8 +27,10 @@
 
 G_BEGIN_DECLS
 
-const gchar* serenity_paths_get_data_dir   (void);
-const gchar* serenity_paths_get_locale_dir (void);
+const gchar* serenity_paths_get_data_dir    (void);
+const gchar* serenity_paths_get_locale_dir  (void);
+gchar*       serenity_paths_build_data_path (const gchar *first,
+                                             ...) G_GNUC_NULL_TERMINATED;
 
 G_END_DECLS
 

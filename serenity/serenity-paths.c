@@ -36,40 +36,55 @@ serenity_paths_get_data_dir (void)
 	const gchar *data_dir = NULL;
 
 	if (G_UNLIKELY (!data_dir)) {
-#ifndef G_OS_WIN32
 		gchar *root = (gchar*)g_getenv ("SERENITY_DATA_PATH");
-		if (!root)
-			root = PACKAGE_DATA_DIR;
-		data_dir = g_build_filename (root, "serenity", NULL);
-#else
-		gchar *win32_dir;
-
-		win32_dir = g_win32_get_package_installation_directory_of_module (NULL);
-		data_dir = g_build_filename (win32_dir, "share", "serenity", NULL);
-
-		g_free (win32_dir);
-#endif
+		if (root)
+			data_dir = g_strdup(root);
+		else
+			data_dir = g_build_filename (PACKAGE_DATA_DIR, "serenity", NULL);
 	}
 
 	return data_dir;
 }
 
 const gchar *
-serenity_dirs_get_locale_dir (void)
+serenity_paths_get_locale_dir (void)
 {
 	static gchar *locale_dir = NULL;
 
 	if (!G_UNLIKELY (locale_dir)) {
-#ifndef G_OS_WIN32
 		locale_dir = g_build_filename (PACKAGE_DATA_DIR, "locale", NULL);
-#else
-		gchar *win32_dir;
-
-		win32_dir = g_win32_get_package_installation_directory_of_module (NULL);
-		locale_dir = g_build_filename (win32_dir, "share", "locale", NULL);
-		g_free (win32_dir);
-#endif
 	}
 
 	return locale_dir;
+}
+
+
+gchar*
+serenity_paths_build_data_path (const gchar *first, ...)
+{
+	va_list args;
+	gchar **argv;
+	const gchar *part;
+	gint c;
+
+	g_return_val_if_fail(first != NULL, NULL);
+
+	c = 1;
+	argv = g_malloc0(sizeof(gchar*) * c);
+	argv[0] = g_strdup(serenity_paths_get_data_dir());
+	part = first;
+
+	va_start(args, first);
+
+	do {
+		argv = g_realloc(argv, sizeof(gchar*) * (c + 2));
+		argv[c++] = g_strdup(part);
+		part = va_arg(args, gchar*);
+	} while (part);
+
+	va_end(args);
+
+	argv[c] = NULL;
+
+	return g_build_filenamev(argv);
 }
