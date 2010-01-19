@@ -38,8 +38,9 @@ AC_SUBST(SERENITY_MAJOR_VERSION)
 dnl ************************************************************************
 dnl Check for Required Modules
 dnl ************************************************************************
-PKG_CHECK_MODULES(SERENITY, [gobject-2.0 >= 2.16
-                             gthread-2.0 >= 2.16
+PKG_CHECK_MODULES(SERENITY, [gobject-2.0 >= 2.20
+                             gthread-2.0 >= 2.20
+                             gio-2.0 >= 2.20
                              clutter-1.0 >= 1.0
                              clutter-gtk-0.10 >= 0.10.2])
 

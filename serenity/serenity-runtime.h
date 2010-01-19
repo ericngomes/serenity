@@ -25,12 +25,16 @@
 
 #include <glib-object.h>
 
+#include "serenity-document.h"
+
 G_BEGIN_DECLS
 
-void serenity_runtime_initialize (void);
-void serenity_runtime_shutdown   (void);
-void serenity_runtime_run        (void);
-void serenity_runtime_quit       (void);
+void   serenity_runtime_initialize    (void);
+void   serenity_runtime_shutdown      (void);
+void   serenity_runtime_run           (void);
+void   serenity_runtime_quit          (void);
+GList* serenity_runtime_get_windows   (void);
+void   serenity_runtime_show_document (SerenityDocument *document);
 
 G_END_DECLS
 

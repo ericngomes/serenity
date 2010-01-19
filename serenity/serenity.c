@@ -21,24 +21,46 @@
 #endif
 
 #include <stdlib.h>
-#include <glib.h>
 #include <glib/gthread.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 
+#include "serenity-document.h"
 #include "serenity-paths.h"
+#include "serenity-prefs.h"
 #include "serenity-runtime.h"
 
-static GOptionEntry entries[] = {
-	{ NULL }
-};
+static gboolean
+open_uri_cb (const gchar *uri)
+{
+	SerenityDocument *doc;
+	GError *error = NULL;
+	GFile *file;
+
+	file = g_file_new_for_commandline_arg(uri);
+	doc = serenity_document_new();
+
+	if (!serenity_document_load_from_file(doc, file, &error)) {
+		g_warning("Error loading \"%s\": %s.", uri, error->message);
+		g_error_free(error);
+		goto finish;
+	}
+
+	serenity_runtime_show_document(doc);
+
+finish:
+	g_object_unref(file);
+	g_object_unref(doc);
+	return FALSE;
+}
 
 gint
-main (gint argc,
+main (gint   argc,
       gchar *argv[])
 {
-	GOptionContext *context  = NULL;
-	GError         *error    = NULL;
-	const gchar    *data_dir = NULL;
+	const gchar *data_dir = NULL;
+	GError *error = NULL;
+	gint i;
 
 	/* initialize i18n */
 	data_dir = PACKAGE_LOCALE_DIR;
@@ -46,21 +68,27 @@ main (gint argc,
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
 
+	/* initialize threading */
+	g_thread_init(NULL);
+
 	/* parse command line arguments */
-	context = g_option_context_new("- A presentation tool");
-	g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
-	if (!g_option_context_parse(context, &argc, &argv, &error)) {
+	if (!serenity_prefs_init(&argc, &argv, &error)) {
 		g_printerr ("%s\n", error->message);
 		return EXIT_FAILURE;
 	}
 
-	/* initialize libraries */
-	g_thread_init(NULL);
-	g_type_init();
-
-	/* initialize runtime and block on main loop */
+	/* initialize runtime */
 	serenity_runtime_initialize();
+
+	/* open requested documents after mainloop starts */
+	for (i = 1; i < argc; i++) {
+		g_timeout_add(0, (GSourceFunc)open_uri_cb, argv[i]);
+	}
+
+	/* block on mainloop */
 	serenity_runtime_run();
+
+	/* cleanup after runtime */
 	serenity_runtime_shutdown();
 
 	return EXIT_SUCCESS;

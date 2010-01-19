@@ -16,16 +16,20 @@ AM_CPPFLAGS = \
 AM_LDFLAGS = $(SERENITY_LIBS)
 
 INST_H_FILES =								\
-	serenity-version.h						\
-	serenity-runtime.h						\
-	serenity-paths.h						\
 	serenity.h							\
+	serenity-document.h						\
+	serenity-paths.h						\
+	serenity-prefs.h						\
+	serenity-runtime.h						\
+	serenity-version.h						\
 	$(NULL)
 
 libserenity_la_SOURCES =						\
 	$(INST_H_FILES)							\
-	serenity-runtime.c						\
+	serenity-document.c						\
 	serenity-paths.c						\
+	serenity-prefs.c						\
+	serenity-runtime.c						\
 	$(NULL)
 
 headerdir = $(prefix)/include/serenity-1.0/serenity

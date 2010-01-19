@@ -33,7 +33,8 @@
  * 
  */
 
-static gboolean started = FALSE;
+static GList    *windows = NULL;
+static gboolean  started = FALSE;
 
 /**
  * serenity_runtime_initialize:
@@ -82,4 +83,32 @@ serenity_runtime_quit (void)
 void
 serenity_runtime_shutdown (void)
 {
+}
+
+/**
+ * serenity_runtime_get_windows:
+ *
+ * Retrieves a #GList containing the #SerenityWindow instances.
+ *
+ * Returns: A #GList.
+ */
+GList*
+serenity_runtime_get_windows (void)
+{
+	return windows;
+}
+
+/**
+ * serenity_runtime_show_document:
+ * @document: A #SerenityDocument.
+ *
+ * Shows the #SerenityDocument in a new window.
+ */
+void
+serenity_runtime_show_document (SerenityDocument *document)
+{
+	GtkWidget *window = NULL;
+
+	windows = g_list_prepend(windows, window);
+	gtk_widget_show(window);
 }
