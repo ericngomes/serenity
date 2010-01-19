@@ -26,6 +26,7 @@
 #include "serenity-panels.h"
 #include "serenity-prefs.h"
 #include "serenity-runtime.h"
+#include "serenity-window.h"
 
 /**
  * SECTION:serenity-runtime
@@ -117,8 +118,12 @@ serenity_runtime_get_windows (void)
 void
 serenity_runtime_show_document (SerenityDocument *document)
 {
-	GtkWidget *window = NULL;
+	GtkWidget *window;
 
+	/* TODO: Show existing window for document. */
+
+	window = serenity_window_new();
+	serenity_window_set_document(SERENITY_WINDOW(window), document);
 	windows = g_list_prepend(windows, window);
 	gtk_widget_show(window);
 }

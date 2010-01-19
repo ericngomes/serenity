@@ -22,6 +22,7 @@ INST_H_FILES =								\
 	serenity-paths.h						\
 	serenity-prefs.h						\
 	serenity-runtime.h						\
+	serenity-window.h						\
 	serenity-version.h						\
 	$(NULL)
 
@@ -32,6 +33,7 @@ libserenity_la_SOURCES =						\
 	serenity-paths.c						\
 	serenity-prefs.c						\
 	serenity-runtime.c						\
+	serenity-window.c						\
 	$(NULL)
 
 headerdir = $(prefix)/include/serenity-1.0/serenity
