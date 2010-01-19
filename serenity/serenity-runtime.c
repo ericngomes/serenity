@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 
+#include "serenity-panels.h"
+#include "serenity-prefs.h"
 #include "serenity-runtime.h"
 
 /**
@@ -41,9 +43,17 @@ static gboolean  started = FALSE;
  *
  * Initializes the runtime system.
  */
-void
-serenity_runtime_initialize (void)
+gboolean
+serenity_runtime_initialize (gint     *argc,
+                             gchar  ***argv,
+                             GError  **error)
 {
+	if (!serenity_prefs_init(argc, argv, error)) {
+		return FALSE;
+	}
+
+	serenity_panels_init();
+
 	started = TRUE;
 }
 

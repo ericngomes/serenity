@@ -1,4 +1,4 @@
-/* serenity-prefs.h
+/* serenity-panels.c
  *
  * Copyright (C) 2010 Christian Hergert
  *
@@ -16,19 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__SERENE_INSIDE__) && !defined (SERENE_COMPILATION)
-#error "Only <serenity/serenity.h> can be included directly."
+#ifdef HAVE_CONFIG_H
+#include "config.h"
 #endif
 
-#ifndef __SERENITY_PREFS__
-#define __SERENITY_PREFS__
+#include <glib/gi18n.h>
+#include <gtk/gtk.h>
 
-#include <glib.h>
+#include "serenity-panels.h"
 
-G_BEGIN_DECLS
+/**
+ * serenity_panels_init:
+ *
+ * Initializes the panels subsystem and panel widgets are created.
+ */
+void
+serenity_panels_init (void)
+{
+	GtkWidget *win;
 
-gboolean serenity_prefs_init (gint *argc, gchar ***argv, GError **error);
-
-G_END_DECLS
-
-#endif /* __SERENITY_PREFS__ */
+	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(win), _("Toolbox"));
+	gtk_window_set_type_hint(GTK_WINDOW(win), GDK_WINDOW_TYPE_HINT_UTILITY);
+	gtk_widget_show(win);
+}

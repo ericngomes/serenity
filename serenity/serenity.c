@@ -27,7 +27,6 @@
 
 #include "serenity-document.h"
 #include "serenity-paths.h"
-#include "serenity-prefs.h"
 #include "serenity-runtime.h"
 
 static gboolean
@@ -59,6 +58,7 @@ main (gint   argc,
       gchar *argv[])
 {
 	const gchar *data_dir = NULL;
+	SerenityDocument *doc;
 	GError *error = NULL;
 	gint i;
 
@@ -71,18 +71,22 @@ main (gint   argc,
 	/* initialize threading */
 	g_thread_init(NULL);
 
-	/* parse command line arguments */
-	if (!serenity_prefs_init(&argc, &argv, &error)) {
-		g_printerr ("%s\n", error->message);
+	/* initialize runtime */
+	if (!serenity_runtime_initialize(&argc, &argv, &error)) {
+		g_printerr("%s\n", error->message);
 		return EXIT_FAILURE;
 	}
-
-	/* initialize runtime */
-	serenity_runtime_initialize();
 
 	/* open requested documents after mainloop starts */
 	for (i = 1; i < argc; i++) {
 		g_timeout_add(0, (GSourceFunc)open_uri_cb, argv[i]);
+	}
+
+	/* open default file if no filename was specified */
+	if (argc < 2) {
+		doc = serenity_document_new();
+		serenity_runtime_show_document(doc);
+		g_object_unref(doc);
 	}
 
 	/* block on mainloop */

@@ -1,4 +1,4 @@
-/* serenity-prefs.h
+/* serenity-panels.h
  *
  * Copyright (C) 2010 Christian Hergert
  *
@@ -20,15 +20,15 @@
 #error "Only <serenity/serenity.h> can be included directly."
 #endif
 
-#ifndef __SERENITY_PREFS__
-#define __SERENITY_PREFS__
+#ifndef __SERENITY_PANELS_H__
+#define __SERENITY_PANELS_H__
 
 #include <glib.h>
 
 G_BEGIN_DECLS
 
-gboolean serenity_prefs_init (gint *argc, gchar ***argv, GError **error);
+void serenity_panels_init (void);
 
 G_END_DECLS
 
-#endif /* __SERENITY_PREFS__ */
+#endif /* __SERENITY_PANELS_H__ */

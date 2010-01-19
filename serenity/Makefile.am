@@ -18,6 +18,7 @@ AM_LDFLAGS = $(SERENITY_LIBS)
 INST_H_FILES =								\
 	serenity.h							\
 	serenity-document.h						\
+	serenity-panels.h						\
 	serenity-paths.h						\
 	serenity-prefs.h						\
 	serenity-runtime.h						\
@@ -27,6 +28,7 @@ INST_H_FILES =								\
 libserenity_la_SOURCES =						\
 	$(INST_H_FILES)							\
 	serenity-document.c						\
+	serenity-panels.c						\
 	serenity-paths.c						\
 	serenity-prefs.c						\
 	serenity-runtime.c						\
