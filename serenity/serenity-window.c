@@ -21,9 +21,11 @@
 #endif
 
 #include <glib/gi18n.h>
+#include <clutter-gtk/clutter-gtk.h>
 
 #include "serenity-paths.h"
 #include "serenity-window.h"
+#include "serenity-runtime.h"
 
 G_DEFINE_TYPE(SerenityWindow, serenity_window, GTK_TYPE_WINDOW)
 
@@ -39,6 +41,7 @@ struct _SerenityWindowPrivate
 {
 	SerenityDocument *document;
 	GtkBuilder *builder;
+	ClutterStage *stage;
 };
 
 /**
@@ -111,6 +114,28 @@ serenity_window_set_document (SerenityWindow   *window,
 	serenity_window_load_document(window, document);
 }
 
+static gboolean
+on_configure (GtkWidget *window,
+              gpointer   user_data)
+{
+	GdkWindow *gdkwindow;
+
+	gdkwindow = gtk_widget_get_window(window);
+	if (gdk_window_get_state(gdkwindow) == GDK_WINDOW_STATE_MAXIMIZED) {
+		gtk_window_fullscreen(GTK_WINDOW(window));
+	}
+
+	return FALSE;
+}
+
+void
+serenity_window_close_button_pressed (ClutterActor *actor,
+                                      ClutterEvent *event,
+                                      gpointer      user_data)
+{
+	serenity_runtime_quit();
+}
+
 static void
 serenity_window_finalize (GObject *object)
 {
@@ -130,7 +155,10 @@ serenity_window_class_init (SerenityWindowClass *klass)
 static void
 serenity_window_init (SerenityWindow *window)
 {
-	GtkWidget *child;
+	GtkWidget *embed;
+	ClutterActor *stage, *toplevel;
+	ClutterScript *script;
+	ClutterColor black = {0x00, 0x00, 0x00, 0xFF};
 	gchar *path;
 
 	window->priv = G_TYPE_INSTANCE_GET_PRIVATE(window,
@@ -139,14 +167,24 @@ serenity_window_init (SerenityWindow *window)
 
 	gtk_window_set_title(GTK_WINDOW(window), _("Serenity"));
 	gtk_window_set_default_size(GTK_WINDOW(window), 640, 480);
+	g_signal_connect(window,
+	                 "configure-event",
+	                 G_CALLBACK(on_configure),
+	                 NULL);
 
-	path = serenity_paths_build_data_path("ui", "serenity.ui", NULL);
-	window->priv->builder = gtk_builder_new();
-	gtk_builder_add_from_file(window->priv->builder, path, NULL);
+	embed = gtk_clutter_embed_new();
+	stage = gtk_clutter_embed_get_stage(GTK_CLUTTER_EMBED(embed));
+	clutter_stage_set_color(CLUTTER_STAGE(stage), &black);
+	gtk_container_add(GTK_CONTAINER(window), embed);
+	gtk_widget_show(embed);
+
+	path = serenity_paths_build_data_path("ui", "stage.ui", NULL);
+	script = clutter_script_new();
+	clutter_script_add_search_paths(script, (const gchar * const *)&path, 1);
+	clutter_script_load_from_file(script, path, NULL);
+	clutter_script_connect_signals(script, NULL);
+	toplevel = CLUTTER_ACTOR(clutter_script_get_object(script, "toplevel"));
+	clutter_container_add_actor(CLUTTER_CONTAINER(stage), toplevel);
+	clutter_actor_show(toplevel);
 	g_free(path);
-
-	child = GTK_WIDGET(gtk_builder_get_object(window->priv->builder,
-	                                          "window-child"));
-	g_assert(child);
-	gtk_widget_reparent(child, GTK_WIDGET(window));
 }

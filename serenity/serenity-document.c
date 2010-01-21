@@ -34,8 +34,19 @@ G_DEFINE_TYPE(SerenityDocument, serenity_document, G_TYPE_OBJECT)
 
 struct _SerenityDocumentPrivate
 {
-	GFile *file;
+	GFile     *file;
+	gint       width;
+	gint       height;
+	GPtrArray *slides;
 };
+
+enum
+{
+	SIZE_CHANGED,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = {0};
 
 /**
  * serenity_document_new:
@@ -91,6 +102,16 @@ serenity_document_class_init (SerenityDocumentClass *klass)
 	object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = serenity_document_finalize;
 	g_type_class_add_private(object_class, sizeof(SerenityDocumentPrivate));
+
+	signals[SIZE_CHANGED] = g_signal_new("size-changed",
+	                                     SERENITY_TYPE_DOCUMENT,
+	                                     G_SIGNAL_RUN_FIRST,
+	                                     0,
+	                                     NULL,
+	                                     NULL,
+	                                     g_cclosure_marshal_VOID__VOID,
+	                                     G_TYPE_NONE,
+	                                     0);
 }
 
 static void
@@ -99,4 +120,7 @@ serenity_document_init (SerenityDocument *document)
 	document->priv = G_TYPE_INSTANCE_GET_PRIVATE(document,
 	                                             SERENITY_TYPE_DOCUMENT,
 	                                             SerenityDocumentPrivate);
+
+	document->priv->width = 1024;
+	document->priv->height = 768;
 }

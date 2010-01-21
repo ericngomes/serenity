@@ -1,0 +1,29 @@
+{
+  "id"       : "toplevel",
+  "type"     : "ClutterGroup",
+  "width"    : 640,
+  "height"   : 480,
+  "children" : [
+    {
+      "type"     : "ClutterRectangle",
+      "width"    : 24,
+      "height"   : 24,
+      "color"    : "#000000ff",
+      "border-color"    : "#333333ff",
+      "border-width"    : 2,
+      "x"        : 14,
+      "y"        : 14,
+      "reactive" : true,
+      "signals"  : [
+        { "name": "button-press-event", "handler": "serenity_window_close_button_pressed" },
+      ]
+    },
+    {
+      "id"       : "close-button",
+      "type"     : "ClutterTexture",
+      "filename" : "close-16.png",
+      "x"        : 20,
+      "y"        : 20,
+    }
+  ]
+}
